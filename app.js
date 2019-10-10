@@ -16,6 +16,11 @@ app.use(bodyParser.json());
     var appRouterPrincipal = require('./routes/app');
     var usuarioRoute = require('./routes/usuario');
     var usuarioLoginRoute = require('./routes/login');
+    var hospitalRoute = require('./routes/hospital');
+    var medicoRoute = require('./routes/medico');
+    var busquedaRoute = require('./routes/busqueda');
+    var uploadRoute = require('./routes/upload');
+    var imagenesRoute = require('./routes/imagenes');
 
 
 
@@ -43,11 +48,23 @@ mongoose.connect('mongodb://localhost:27017/HospitalDB',{ useUnifiedTopology: tr
     // });
 */
 
+/*Servidor index
+// Server index config
+var serveIndex = require('serve-index');
+app.use(express.static(__dirname + '/'))
+app.use('/uploads', serveIndex(__dirname + '/uploads'));
+*/
+
 
 // Rutas, Middlewares
 
     app.use('/usuario', usuarioRoute);
+    app.use('/hospital', hospitalRoute);
+    app.use('/medico', medicoRoute);
     app.use('/login', usuarioLoginRoute);
+    app.use('/busqueda', busquedaRoute);
+    app.use('/upload', uploadRoute);
+    app.use('/imagen', imagenesRoute);
     app.use('/', appRouterPrincipal);
 
 

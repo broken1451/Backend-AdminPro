@@ -27,9 +27,15 @@ var Usuario = require('../models/usuario');
 // Metodo Obtener todos los usuarios
 //=============================================================================================
 app.get('/', (req, res, next) => {
+    // paramatro opcional para leerlo desde la url
+    var desde = req.query.desde || 0;
+        desde = Number(desde);
+    console.log('desde: ', desde);
+    
 
     // Usando mongoDB y esquema de usuario y filtrar por campos
-    Usuario.find({}, 'nombre email img role').exec( (errMongo, usuariosMongo) => {
+    //skip() salta el numero
+    Usuario.find({}, 'nombre email img role').skip(desde).limit(4).exec( (errMongo, usuariosMongo) => {
         if (errMongo) {
             return res.status(500).json({
                 ok: false,
@@ -38,12 +44,24 @@ app.get('/', (req, res, next) => {
             })
         }
 
-        res.status(200).json({
-            ok: true,
-            mensaje: "Usuarios",
-            usuarios: usuariosMongo
-        })
-        // console.log('Res: ', res);
+        // Poner un contador para saber cuanto usuarios tenemos
+        // Usuario.count({}) cuantalos todos
+            Usuario.count({},(err,conteo) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: "Error contando usuarios",
+                        errors: err
+                    })
+                }
+
+                res.status(200).json({
+                    ok: true,
+                    mensaje: "Usuarios",
+                    usuarios: usuariosMongo,
+                    totalUsuarios: conteo
+                });
+            });       
     });
 });
 
@@ -88,7 +106,7 @@ app.post('/', mdwareAutenticacion ,(req, res) => {
     console.log('body: ', body);
 
     // Hace referencia al modelo de datos de Usuario
-    var usuario = Usuario({
+    var usuario = new Usuario({
         nombre : body.nombre,
         email: body.email,
         // password: bcrypt.hashSync(dato a encriptar),
@@ -110,7 +128,8 @@ app.post('/', mdwareAutenticacion ,(req, res) => {
         res.status(201).json({
             ok: true,
             usuarioGuardado: usuarioGuardado,
-            usuarioToken: req.usuarioBdLogin,
+            // usuarioToken: req.usuarioBdLogin,
+            usuarioToken: usuarioBdLogin,
             body:body
         });
     });
@@ -165,7 +184,8 @@ app.put('/:id', mdwareAutenticacion ,(req,res) => {
                 ok: true,
                 rek: rekuest,
                 usuarioId: usuarioGuardadoId,
-                usuarioToken: req.usuarioBdLogin
+                // usuarioToken: req.usuarioBdLogin
+                usuarioToken: usuarioBdLogin,
             });
         });
       

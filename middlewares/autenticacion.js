@@ -35,11 +35,13 @@ appMiddleware = function (req,res,next) {
                 });
             }
 
-            req.usuarioBdLogin = decoded.usuarioBdLogin
+            // req.usuarioBdLogin = decoded.usuarioBdLogin
+            usuarioBdLogin = decoded.usuarioBdLogin
             next(); // continua con las siguientes funciones si no hay error 
             // res.status(200).json({
             //     ok: true,
-            //     decoded:decoded
+            //     decoded:decoded,
+            //     usuarioBdLogin: decoded.usuarioBdLogin
             // });
         });
  }
