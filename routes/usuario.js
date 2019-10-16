@@ -128,7 +128,7 @@ app.post('/', mdwareAutenticacion ,(req, res) => {
         res.status(201).json({
             ok: true,
             usuarioGuardado: usuarioGuardado,
-            // usuarioToken: req.usuarioBdLogin,
+            usuarioToken: req.usuarioBdLogin,
             usuarioToken: usuarioBdLogin,
             body:body
         });
