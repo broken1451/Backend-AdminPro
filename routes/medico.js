@@ -1,4 +1,4 @@
-  var express = require('express');
+var express = require('express');
 var mdwareAutenticacion = require('../middlewares/autenticacion');
 
 var app = express();
@@ -53,11 +53,44 @@ app.get('/', (req, res) => {
 
 });
 
+
+//=============================================================================================
+// Metodo de obtener un medico a la bd  
+//=============================================================================================
+ app.get('/:id', (req,res) => {
+    var id = req.params.id;
+    Medico.findById(id).populate('usuario','nombre email img').populate('hospital')
+                    .exec((err, medico) => {
+                        if (err) {
+                            return res.status(500).json({
+                                ok: false,
+                                mensaje: "Error al medico no encontrado",
+                                errors: err
+                            });
+                        }
+                
+                        if (!medico) {
+                            return res.status(400).json({
+                                ok: false,
+                                mensaje: "El Medico con el " + id + "no existe",
+                                // errors: err
+                                errors: { message: 'No existe un medico con ese ID' }
+                            });
+                        }
+
+                        res.status(200).json({
+                            ok: true,
+                            medico: medico,
+                            // usuarioToken: req.usuarioBdLogin
+                        });
+                    });
+ });  
+
 //=============================================================================================
 // Metodo de Crear/Ingresar un  medico a la bd  
 //=============================================================================================
-
-app.post('/',mdwareAutenticacion,(req,res) => {
+// mdwareAutenticacion
+app.post('/',(req,res) => {
     var body = req.body;
     var usuario = Usuario._id;
     var hospital = Hospital._id
@@ -84,7 +117,7 @@ app.post('/',mdwareAutenticacion,(req,res) => {
             mensaje: "Medicos",
             medicoGuardado: medicoGuardado,
             usuarioToken: req.usuarioBdLogin,
-            body: body,
+            body: body
         });
     });
 
@@ -94,8 +127,8 @@ app.post('/',mdwareAutenticacion,(req,res) => {
 //=============================================================================================
 // Metodo de Medico un usuario en la bd  
 //=============================================================================================
-
-app.put('/:id',mdwareAutenticacion, (req,res) => {
+// mdwareAutenticacion
+app.put('/:id', (req,res) => {
     var id = req.params.id;
     var rekuest= req.params;
     var body = req.body;
@@ -150,8 +183,8 @@ app.put('/:id',mdwareAutenticacion, (req,res) => {
 //=============================================================================================
 // Metodo de borrar un usuario en la bd  
 //=============================================================================================
-
-app.delete('/:id',mdwareAutenticacion, (req,res) => {
+// mdwareAutenticacion
+app.delete('/:id', (req,res) => {
     
     var id = req.params.id;
     var body = req.params;

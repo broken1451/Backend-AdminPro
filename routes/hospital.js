@@ -52,11 +52,45 @@ app.get('/', (req, res) => {
 
 });
 
+
+// ==========================================
+// Obtener Hospital por ID
+// ==========================================
+ app.get('/:id', (req, res) => {
+    var id = req.params.id;
+    Hospital.findById(id)
+    .populate('usuario', 'nombre img email')
+    .exec((err, hospital) => {
+        if (err) {
+            return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error al buscar hospital',
+                    errors: err
+            });
+        }
+
+        if (!hospital) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'El hospital con el id ' + id + ' no existe',
+                errors: { message: 'No existe un hospital con ese ID' }
+            });
+        }
+        
+        res.status(200).json({
+                ok: true,
+                hospital: hospital
+        });
+    })
+ })
+
+
+
 //=============================================================================================
 // Metodo de Crear/Ingresar un  Hospital a la bd  
 //=============================================================================================
-
-app.post('/', mdwareAutenticacion ,(req,res) => {
+// mdwareAutenticacion mdwareAutenticacion
+app.post('/' ,(req,res) => {
     var body = req.body;
     var usuario = Usuario._id; //id del usuario
 
@@ -68,7 +102,7 @@ app.post('/', mdwareAutenticacion ,(req,res) => {
         // usuario: req.usuario._id     
     });
 
-    hospital.save((err,hospitalGuardado) => {
+     hospital.save((err,hospitalGuardado) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
@@ -83,7 +117,7 @@ app.post('/', mdwareAutenticacion ,(req,res) => {
             usuarioToken: req.usuarioBdLogin,
             body: body
         });
-    });
+     });
 
 });
 
@@ -91,8 +125,8 @@ app.post('/', mdwareAutenticacion ,(req,res) => {
 //=============================================================================================
 // Metodo de Hospital un usuario en la bd  
 //=============================================================================================
-
-app.put('/:id',mdwareAutenticacion, (req,res) => {
+// mdwareAutenticacion
+app.put('/:id', (req,res) => {
     var id = req.params.id;
     var rekuest= req.params;
     var body = req.body;
@@ -148,8 +182,8 @@ app.put('/:id',mdwareAutenticacion, (req,res) => {
 //=============================================================================================
 // Metodo de borrar un usuario en la bd  
 //=============================================================================================
-
-app.delete('/:id',mdwareAutenticacion, (req,res) => {
+// mdwareAutenticacion
+app.delete('/:id', (req,res) => {
     
     var id = req.params.id;
     var body = req.params;

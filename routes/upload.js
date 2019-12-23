@@ -154,6 +154,62 @@ function subirImagenPorTipo(tipoImagen, id, nombreArchivo, res) {
         });    
     }
 
+    if (tipoImagen === 'hospitales') {
+        Hospital.findById(id, (err,hospital)=>{
+            
+            if (err) {
+                 res.status(500).json({
+                    ok: false,
+                    mensaje: "Error al subir Imagen",
+                    errors: err
+                });
+            }
+            
+            if (!hospital) {
+                return  res.status(500).json({
+                     ok: false,
+                     mensaje: "Error el hospital con ese id no existe",
+                     errors: err
+                 });
+             }
+            var pathViejo = './uploads/hospitales/' + hospital.img; // pathViejo de la imagen si el usuario ya tiene una guardada 
+
+            // Para borrar el path viejo hay q hacer una validacion y se requiere hacer lo siguiente  
+            // Se importa una libreria de node filesystem(fs)
+            
+            if (fileSystem.existsSync(pathViejo)) {  // si existe elimina la imagen anterior
+                fileSystem.unlink(pathViejo,(err) => {
+                    if (err) {
+                        return res.status(500).json({
+                            ok: false,
+                            mensaje: "Error en path",
+                            errors: err
+                        });
+                    }
+                });
+            }
+
+            hospital.img = nombreArchivo;
+          
+            hospital.save((err,hospitalImgGuardada)=>{
+                if (err) {
+                    return res.status(400).json({
+                        ok: false,
+                        mensaje: "Error al subir imagen de hospital",
+                        errors: err
+                    });
+                }
+                // hospitalImgGuardada.password = ':)' ;
+                return res.status(200).json({
+                    ok: true,
+                    mensaje:'Imagen de hospitales guardada exitosamente',
+                    hospitalImgGuardada:hospitalImgGuardada  
+                });
+
+            });
+        });
+    }
+
     if (tipoImagen === 'medicos') {
 
         Medico.findById(id, (err,medico)=>{
@@ -211,62 +267,6 @@ function subirImagenPorTipo(tipoImagen, id, nombreArchivo, res) {
             });
         });
         
-    }
-
-    if (tipoImagen === 'hospitales') {
-        Hospital.findById(id, (err,hospital)=>{
-            
-            if (err) {
-                 res.status(500).json({
-                    ok: false,
-                    mensaje: "Error al subir Imagen",
-                    errors: err
-                });
-            }
-            
-            if (!hospital) {
-                return  res.status(500).json({
-                     ok: false,
-                     mensaje: "Error el hospital con ese id no existe",
-                     errors: err
-                 });
-             }
-            var pathViejo = './uploads/hospitales/' + hospital.img; // pathViejo de la imagen si el usuario ya tiene una guardada 
-
-            // Para borrar el path viejo hay q hacer una validacion y se requiere hacer lo siguiente  
-            // Se importa una libreria de node filesystem(fs)
-            
-            if (fileSystem.existsSync(pathViejo)) {  // si existe elimina la imagen anterior
-                fileSystem.unlink(pathViejo,(err) => {
-                    if (err) {
-                        return res.status(500).json({
-                            ok: false,
-                            mensaje: "Error en path",
-                            errors: err
-                        });
-                    }
-                });
-            }
-
-            hospital.img = nombreArchivo;
-          
-            hospital.save((err,hospitalImgGuardada)=>{
-                if (err) {
-                    return res.status(400).json({
-                        ok: false,
-                        mensaje: "Error al subir imagen de hospital",
-                        errors: err
-                    });
-                }
-                // hospitalImgGuardada.password = ':)' ;
-                return res.status(200).json({
-                    ok: true,
-                    mensaje:'Imagen de medico guardada exitosamente',
-                    hospitalImgGuardada:hospitalImgGuardada  
-                });
-
-            });
-        });
     }
 
 }

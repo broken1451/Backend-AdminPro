@@ -55,7 +55,7 @@ const client = new OAuth2Client(CLIENT_ID);
 
     var token = req.body.token;
     console.log('Token Google: ', token);
-
+    
     var googleUser = await verify(token).catch((err)=> {
         return res.status(403).json({
             ok: false,
@@ -64,6 +64,7 @@ const client = new OAuth2Client(CLIENT_ID);
             err:err
         });
     });
+    console.log('googleUser: ', googleUser);
 
     // Verificar si existe si el correo gmail 
     Usuario.findOne({email: googleUser.email}, (err,usuarioBdLogin) => {
@@ -92,6 +93,7 @@ const client = new OAuth2Client(CLIENT_ID);
                     token:token,
                     mensaje: "Login funcionando",
                     id: usuarioBdLogin._id,
+                    menu: obtenerMenu(usuarioBdLogin.role)
                 });
             }
         } else {
@@ -118,6 +120,7 @@ const client = new OAuth2Client(CLIENT_ID);
                     token:token,
                     mensaje: "Login funcionando",
                     id: usuarioGuardado._id,
+                    menu: obtenerMenu(usuarioGuardado.role)
                 });
             });
         }
@@ -176,10 +179,42 @@ app.post('/', (req, res) => {
             mensaje: "Login funcionando",
             body: body,
             id: usuarioBdLogin._id,
+            menu: obtenerMenu(usuarioBdLogin.role)
             
         });
     });
 });
+
+ function obtenerMenu(role) { 
+   var menu = [{
+        titulo: 'Principal',
+        icono: 'mdi mdi-gauge',
+          submenu: [
+            {titulo: 'Dashboard', url: '/dashboard'},
+            {titulo: 'Progress', url: '/progress'},
+            {titulo: 'Graficas', url: '/graficas1'},
+            {titulo: 'Promesas', url: '/promesas'},
+            {titulo: 'Rxjs', url: '/rxjs'},
+            {titulo: 'Account Settings', url: '/account-settings'},
+          ]
+      },
+      {
+        titulo: 'Mantenimientos',
+        icono: 'mdi mdi-folder',
+        submenu: [
+        //   {titulo: 'Usuario', url: '/usuarios'},
+          {titulo: 'Hospitales', url: '/hospitales'},
+          {titulo: 'Medicos', url: '/medicos'},
+        ]
+      }];
+
+      if (role === 'ADMIN_ROLE') {
+          menu[1].submenu.unshift({titulo: 'Usuario', url: '/usuarios'});
+      }
+
+
+    return menu;
+ }
 
 module.exports = app;
 

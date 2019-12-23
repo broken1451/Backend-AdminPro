@@ -116,7 +116,7 @@ function buscarHospitales( busqueda ,expRegular, desde) {
             } else {
                 resolve(hospitales);
             }
-        }).populate('usuario', 'nombre email').skip(desde).limit(4);
+        }).populate('usuario', 'nombre email img').skip(desde).limit(4);
     });
 }
 
@@ -130,15 +130,15 @@ function buscarMedico( busqueda ,expRegular,desde) {
             } else {
                 resolve(medicos);
             }
-        }).populate('usuario','nombre email').populate('hospital', 'nombre').skip(desde).limit(4);
+        }).populate('usuario','nombre email img').populate('hospital', 'nombre img').skip(desde).limit(4);
     });
 }
 
 function buscarUsuarios( busqueda ,expRegular,desde) {
     
     return new Promise((resolve,reject) => {
-
-        Usuario.find({}, 'nombre email role').skip(desde).limit(4).or([{'nombre':expRegular},{'email':expRegular}])
+    
+        Usuario.find({}, 'nombre email role img').skip(desde).limit(4).or([{'nombre':expRegular},{'email':expRegular}, {'img':expRegular}])
                       .exec((err,usuarios) => {
                             if (err) {
                                 reject('Error al buscar usuarios', err);

@@ -1,5 +1,6 @@
 var express = require('express');
 var appMiddleware = express();
+var appMiddlewareAdmin = express();
 
 // Plugin de token
 var jwt = require('jsonwebtoken');
@@ -13,7 +14,8 @@ var SEED = require('../config/config');
 // Verificar token con un midleware(siempre se ejecutan de primero)
 //=============================================================================================
 
-appMiddleware = function (req,res,next) {
+// appMiddleware = function (req,res,next) {
+exports.appMiddleware = function (req,res,next) {
       // paramatro opcional para leer el token por la url
     var token = req.query.token;
     var reqQueryToken = req.query;
@@ -37,14 +39,91 @@ appMiddleware = function (req,res,next) {
 
             // req.usuarioBdLogin = decoded.usuarioBdLogin
             usuarioBdLogin = decoded.usuarioBdLogin
+            
             next(); // continua con las siguientes funciones si no hay error 
             // res.status(200).json({
             //     ok: true,
             //     decoded:decoded,
             //     usuarioBdLogin: decoded.usuarioBdLogin
             // });
+            
         });
+
+   
  }
+
+
+// =============================================================================================
+// Verificar ADMIN
+// =============================================================================================
+
+ exports.appMiddlewareAdmin = function (req,res,next) {
+
+    var usuario = req.body.role;
+    // var usuarioBody = req.body;
+    // var usuarioRol = req.body.role;
+    console.log('usuario :V : ', usuario);
+    // console.log('usuarioBody :V : ', usuarioBody);
+    // console.log('usuarioRol :V : ', usuarioRol);
+
+    if (usuario === 'ADMIN_ROLE') {
+      next(); // continua con las siguientes funciones si no hay error 
+      return;
+    } else {
+        return res.status(401).json({
+            ok: false,
+            mensaje: "Error TOKEN no valido - No es administrador",
+            // errors: err
+            errors: { message: 'Error TOKEN no valido - No es administrador' }
+        });
+    }
+        
+    }
+
+    
+// // //=============================================================================================
+// // // Verificar ADMIN o Mismo usuario
+// // //=============================================================================================
+
+    
+ exports.appMiddlewareAdminOmismoUsuario = function (req,res,next) {
+
+    var usuario = req.body.role;    
+    var id = req.params.id;
+    var body = req.body;
+    var usuarioID = req.body._id; // usuario que esta en e;l token
+    // var usuarioBody = req.body;
+    // var usuarioRol = req.body.role;
+    console.log('usuario : ', usuario); 
+    console.log('usuarioID : ', usuarioID);
+    console.log('body : ', body);
+    console.log('id : ', id);
+    // console.log('usuarioBody :V : ', usuarioBody);
+    // console.log('usuarioRol :V : ', usuarioRol);
+
+    if (usuario === 'ADMIN_ROLE' || usuarioID === id ) {
+      next(); // continua con las siguientes funciones si no hay error 
+      return;
+    } else {
+        return res.status(401).json({
+            ok: false,
+            mensaje: "Error TOKEN no valido - No es administrador",
+            // errors: err
+            errors: { message: 'Error TOKEN no valido - No es administrador' }
+        });
+    }
+        
+    }
+    
+// module.exports = appMiddleware;
+// module.exports = appMiddlewareAdmin;
+
+ 
+
+
+
+
+
 
 
 
@@ -80,7 +159,6 @@ appMiddleware = function (req,res,next) {
 // }
 
 
-module.exports = appMiddleware;
 
 
 

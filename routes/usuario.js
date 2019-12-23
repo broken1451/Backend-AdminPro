@@ -17,6 +17,7 @@ var SEED = require('../config/config');
 // Utenticacion
 var mdwareAutenticacion = require('../middlewares/autenticacion');
 
+
 // Inicializar variables
 var app = express();
 
@@ -35,7 +36,7 @@ app.get('/', (req, res, next) => {
 
     // Usando mongoDB y esquema de usuario y filtrar por campos
     //skip() salta el numero
-    Usuario.find({}, 'nombre email img role').skip(desde).limit(4).exec( (errMongo, usuariosMongo) => {
+    Usuario.find({}, 'nombre email img role google').skip(desde).limit(4).exec( (errMongo, usuariosMongo) => {
         if (errMongo) {
             return res.status(500).json({
                 ok: false,
@@ -100,7 +101,8 @@ app.get('/', (req, res, next) => {
 // Metodo de Crear/Ingresar un  nuevousuario a la bd  
 //=============================================================================================
 // app.post('/', mdwareAutenticacion.verificaToken ,(req, res) => {
-app.post('/', mdwareAutenticacion ,(req, res) => {
+    // mdwareAutenticacion
+app.post('/' ,(req, res) => {
     // console.log('req: ', req);
     var body = req.body; // solo funciona con body parses configurado application/x-www-form-urlencoded
     console.log('body: ', body);
@@ -128,8 +130,8 @@ app.post('/', mdwareAutenticacion ,(req, res) => {
         res.status(201).json({
             ok: true,
             usuarioGuardado: usuarioGuardado,
-            usuarioToken: req.usuarioBdLogin,
-            usuarioToken: usuarioBdLogin,
+            // usuarioToken: req.usuarioBdLogin,
+            // usuarioToken: usuarioBdLogin,
             body:body
         });
     });
@@ -140,7 +142,9 @@ app.post('/', mdwareAutenticacion ,(req, res) => {
 //=============================================================================================
     // app.put('/:recurso obligatorio de la app', (req,res) => {
 // app.put('/:id', mdwareAutenticacion.verificaToken ,(req,res) => {
-app.put('/:id', mdwareAutenticacion ,(req,res) => {
+    // mdwareAutenticacion.appMiddlewareAdmin, mdwareAutenticacion.appMiddlewareAdmin
+    // mdwareAutenticacion.appMiddlewareAdminOmismoUsuario
+app.put('/:id', [mdwareAutenticacion.appMiddleware, mdwareAutenticacion.appMiddlewareAdminOmismoUsuario ], (req,res) => {
     var id = req.params.id;
     var rekuest= req.params;
     var body = req.body;
@@ -197,7 +201,7 @@ app.put('/:id', mdwareAutenticacion ,(req,res) => {
 // Metodo de borrar un usuario en la bd  
 //=============================================================================================
 // app.delete('/:id', mdwareAutenticacion.verificaToken,(req,res) => {
-app.delete('/:id', mdwareAutenticacion,(req,res) => {
+app.delete('/:id', [mdwareAutenticacion.appMiddleware],(req,res) => {
 
     var id = req.params.id;
     var body = req.params;

@@ -6,6 +6,15 @@ var bodyParser = require('body-parser');
 // Inicializar variables
 var app = express();
 
+
+// Cors
+ app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+    next();
+ });
+
 // Body Parses configuracion
     // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -39,7 +48,7 @@ mongoose.connect('mongodb://localhost:27017/HospitalDB',{ useUnifiedTopology: tr
         var mongoose = require('mongoose');
             mongoose.connect('mongodb://localhost/test', {useNewUrlParser: true});
 
-    // una manera de conectarse con mongo:
+    // una manera de cbonectarse con mongo:
     // mongoose.connection.openUri('mongodb://localhost:27017/HospitalDB',callback de conexion(err, res) => {
     //     if (err) {
     //         throw  err;
