@@ -11,11 +11,30 @@ var jwt = require('jsonwebtoken');
     // var SEED = require('../config/config').SEED;
 var SEED = require('../config/config');
 
+
+// Renovar token
+var mdwareAutenticacion = require('./../middlewares/autenticacion');
+
 // Inicializar variables
 var app = express();
 
 // Importar modelo de usuario para login
 var Usuario = require('../models/usuario');
+
+
+
+// ==========================================================================================
+// Renovar token Backend
+// ==========================================================================================
+app.get('/renuevatoken',mdwareAutenticacion.appMiddleware ,(req,res) => {
+
+    var token = jwt.sign({usuarioBdLogin:usuarioBdLogin},SEED,{expiresIn:14400})//4horas
+    res.status(200).json({
+       ok: true,
+       usuarioBdLogin: usuarioBdLogin,
+       token: token
+    })
+});
 
 // ==========================================================================================
 // Google
